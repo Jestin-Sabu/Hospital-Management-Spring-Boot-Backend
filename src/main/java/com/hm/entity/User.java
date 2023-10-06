@@ -3,7 +3,6 @@ package com.hm.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,81 +18,144 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "users", 
-    uniqueConstraints = { 
-      @UniqueConstraint(columnNames = "username"),
-      @UniqueConstraint(columnNames = "email") 
-    })
+@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = "username"),
+		@UniqueConstraint(columnNames = "email") })
 public class User {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  @NotBlank
-  @Size(max = 20)
-  private String username;
+	@NotBlank
+	@Size(max = 20)
+	private String username;
 
-  @NotBlank
-  @Size(max = 50)
-  @Email
-  private String email;
+	@NotBlank
+	@Size(max = 50)
+	@Email
+	private String email;
 
-  @NotBlank
-  @Size(max = 120)
-  private String password;
+	@NotBlank
+	@Size(max = 120)
+	private String password;
 
-  @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(  name = "user_roles", 
-        joinColumns = @JoinColumn(name = "user_id"), 
-        inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Role> roles = new HashSet<>();
+	@NotBlank
+	@Size(max = 50)
+	private String firstName;
 
-  public User() {
-  }
+	@NotBlank
+	@Size(max = 50)
+	private String lastName;
 
-  public User(String username, String email, String password) {
-    this.username = username;
-    this.email = email;
-    this.password = password;
-  }
+	@NotBlank
+	@Size(max = 10)
+	private String mobileNumber;
 
-  public Long getId() {
-    return id;
-  }
+	@NotBlank
+	@Size(max = 75)
+	private String address;
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+	@NotBlank
+	@Size(max = 6)
+	private String pin;
 
-  public String getUsername() {
-    return username;
-  }
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<>();
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+	public User() {
+	}
 
-  public String getEmail() {
-    return email;
-  }
+	public User(String username, String email, String password, String firstName, String lastName, String mobileNumber,
+			String address, String pin) {
+		super();
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.mobileNumber = mobileNumber;
+		this.address = address;
+		this.pin = pin;
+	}
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+	public Long getId() {
+		return id;
+	}
 
-  public String getPassword() {
-    return password;
-  }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+	public String getUsername() {
+		return username;
+	}
 
-  public Set<Role> getRoles() {
-    return roles;
-  }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-  public void setRoles(Set<Role> roles) {
-    this.roles = roles;
-  }
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPin() {
+		return pin;
+	}
+
+	public void setPin(String pin) {
+		this.pin = pin;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
 }
