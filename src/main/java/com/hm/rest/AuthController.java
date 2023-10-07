@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import com.hm.entity.ERole;
 import com.hm.entity.Role;
 import com.hm.entity.User;
 import com.hm.payload.request.LoginRequest;
+import com.hm.payload.request.MessageRequest;
 import com.hm.payload.request.SignupRequest;
 import com.hm.payload.response.JwtResponse;
 import com.hm.payload.response.MessageResponse;
@@ -116,9 +118,17 @@ public class AuthController {
 		user.setRoles(roles);
 		userRepository.save(user);
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+		return ResponseEntity.ok(new MessageResponse("User registered successfully! " + "Username : " + user.getUsername()));
 	}
 	
+	@PostMapping("/search")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> searchUser(@Valid @RequestBody MessageRequest msg) {
+		User user= userRepository.findByUsername(msg.getMessage())
+		        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + msg.getMessage()));
+		return ResponseEntity.ok(user);
+		
+	}
 	  private User getUser(String userName) {
 		  User user = userRepository.findByUsername(userName)
 			        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + userName));
