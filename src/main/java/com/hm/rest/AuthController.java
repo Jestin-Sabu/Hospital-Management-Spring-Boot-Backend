@@ -66,8 +66,8 @@ public class AuthController {
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
-		return ResponseEntity.ok(
-				new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles, getUser(userDetails.getUsername())));
+		return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(),
+				userDetails.getEmail(), roles, getUser(userDetails.getUsername())));
 	}
 
 	@PostMapping("/signup")
@@ -118,20 +118,58 @@ public class AuthController {
 		user.setRoles(roles);
 		userRepository.save(user);
 
-		return ResponseEntity.ok(new MessageResponse("User registered successfully! " + "Username : " + user.getUsername()));
+		return ResponseEntity
+				.ok(new MessageResponse("User registered successfully! " + "Username : " + user.getUsername()));
 	}
-	
+
 	@PostMapping("/search")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<?> searchUser(@Valid @RequestBody MessageRequest msg) {
-		User user= userRepository.findByUsername(msg.getMessage())
-		        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + msg.getMessage()));
+		User user = userRepository.findByUsername(msg.getMessage())
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + msg.getMessage()));
 		return ResponseEntity.ok(user);
-		
+
 	}
-	  private User getUser(String userName) {
-		  User user = userRepository.findByUsername(userName)
-			        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + userName));
-		  return user;
-	  }
+
+	@PostMapping("/patient/search")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> searchPatient(@Valid @RequestBody MessageRequest msg) {
+		User user = userRepository.findByUsername(msg.getMessage()).orElseThrow(
+				() -> new UsernameNotFoundException("Patient Not Found with username: " + msg.getMessage()));
+		Boolean flag = false;
+		for (Role r : user.getRoles()) {
+			if (r.getName() != ERole.ROLE_PATIENT) {
+				flag = true;
+			}
+		}
+		if (flag) {
+			throw new UsernameNotFoundException("Patient Not Found with username: " + msg.getMessage());
+		}
+		return ResponseEntity.ok(user);
+
+	}
+
+	private User getUser(String userName) {
+		User user = userRepository.findByUsername(userName)
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + userName));
+		return user;
+	}
+
+	@PostMapping("/doctor/search")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<?> searchDoctor(@Valid @RequestBody MessageRequest msg) {
+		User user = userRepository.findByUsername(msg.getMessage()).orElseThrow(
+				() -> new UsernameNotFoundException("Doctor Not Found with username: " + msg.getMessage()));
+		Boolean flag = false;
+		for (Role r : user.getRoles()) {
+			if (r.getName() != ERole.ROLE_DOCTOR) {
+				flag = true;
+			}
+		}
+		if (flag) {
+			throw new UsernameNotFoundException("Doctor Not Found with username: " + msg.getMessage());
+		}
+		return ResponseEntity.ok(user);
+
+	}
 }
